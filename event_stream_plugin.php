@@ -79,50 +79,51 @@ class EventStreamPlugin extends Plugin
     }
 
     /**
-     * @param stdClass $client
+     * @param stdClass $event
      * @return void
      */
-    public function sendClientAdded($client)
+    public function sendClientAdded($event)
     {
-        if (!empty($client->params['client'])) {
-            $this->sendEvent('clientAdded', (array) $client->params['client']);
-        }
+        $this->sendEvent('clientAdded', $event->getParams());
     }
 
     /**
-     * @param stdClass $client
+     * @param stdClass $event
      * @return void
      */
-    public function sendClientUpdated($client)
+    public function sendClientUpdated($event)
     {
-        if (!empty($client->params['client'])) {
-            $this->sendEvent('clientUpdated', (array) $client->params['client']);
-        }
+        $this->sendEvent('clientUpdated', $event->getParams());
     }
 
     /**
-     * @param int $invoice_id
-     * @param stdClass $old_invoice
+     * @param stdClass $event
      * @return void
      */
-    public function sendInvoiceClosed($invoice_id)
+    public function sendInvoiceClosed($event)
     {
-        Loader::loadModels($this, ['Invoices']);
-        $invoice = $this->Invoices->get($invoice_id);
+        $this->sendEvent('invoiceClosed', $event->getParams());
+        //Loader::loadModels($this, ['Invoices']);
+        //$invoice = $this->Invoices->get($invoice_id);
 
-        if ($invoice) {
+        /*if ($invoice) {
             $this->sendEvent('invoiceClosed', (array) $invoice);
-        }
+        }*/
     }
 
-    public function sendTransaction($transaction_id)
+    /**
+     * @param stdClass $event
+     * @return void
+     */
+    public function sendTransaction($event)
     {
-        Loader::loadModels($this, ['Transactions']);
+        $this->sendEvent('transactionAdded', $event->getParams());
+        /*Loader::loadModels($this, ['Transactions']);
         $transaction = $this->Transactions->get($transaction_id);
 
         if ($transaction) {
             $this->sendEvent('transactionAdded', (array) $transaction);
-        }
+        }*/
     }
 
     /**
