@@ -84,7 +84,10 @@ class EventStreamPlugin extends Plugin
      */
     public function sendClientAdded($event)
     {
-        $this->sendEvent('clientAdded', $event->getParams());
+        $params = $event->getParams();
+        if (!empty($params['client'])) {
+            $this->sendEvent('clientAdded', $params['client']);
+        }
     }
 
     /**
