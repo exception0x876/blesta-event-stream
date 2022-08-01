@@ -129,6 +129,9 @@ class EventStreamPlugin extends Plugin
     {
         $company_id = Configure::get('Blesta.company_id');
         $endpoint = $this->Companies->getSetting($company_id, 'event_stream.endpoint');
+        if (empty($endpoint)) {
+            return;
+        }
         $client = new \GuzzleHttp\Client();
         try {
             $client->postAsync($endpoint, [
