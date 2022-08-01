@@ -46,11 +46,14 @@ class AdminManagePlugin extends AppController
 
         if (!empty($this->post)) {
             $this->parent->Companies->setSetting($this->company_id, 'event_stream.endpoint', $this->post['endpoint']);
+            $this->parent->Companies->setSetting($this->company_id, 'event_stream.private_key', $this->post['private_key']);
         }
 
         $endpoint = $this->parent->Companies->getSetting($this->company_id, 'event_stream.endpoint');
+        $private_key = $this->parent->Companies->getSetting($this->company_id, 'event_stream.private_key');
         $vars = (object)[
-            'endpoint' => $endpoint->value
+            'endpoint' => $endpoint->value,
+            'private_key' => $private_key->value,
         ];
 
         // Set the view to render
