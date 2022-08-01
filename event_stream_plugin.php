@@ -79,12 +79,14 @@ class EventStreamPlugin extends Plugin
     }
 
     /**
-     * @param stdClass $client
+     * @param stdClass $event
      * @return void
      */
-    public function sendClientAdded($client)
+    public function sendClientAdded($event)
     {
-        $this->sendEvent('clientAdded', (array) $client);
+        if (!empty($event->params['client'])) {
+            $this->sendEvent('clientAdded', (array) $event);
+        }
     }
 
     /**
@@ -93,7 +95,9 @@ class EventStreamPlugin extends Plugin
      */
     public function sendClientUpdated($client)
     {
-        $this->sendEvent('clientUpdated', (array) $client);
+        if (!empty($event->params['client'])) {
+            $this->sendEvent('clientUpdated', (array)$client);
+        }
     }
 
     /**
