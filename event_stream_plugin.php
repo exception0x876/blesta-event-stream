@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Event Stream plugin handler
  *
