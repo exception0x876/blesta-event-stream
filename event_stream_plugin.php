@@ -131,7 +131,7 @@ class EventStreamPlugin extends Plugin
         $company_id = Configure::get('Blesta.company_id');
         Loader::loadModels($this, ['Companies']);
         $endpoint = $this->Companies->getSetting($company_id, 'event_stream.endpoint');
-        if (empty($endpoint)) {
+        if (empty($endpoint->value)) {
             return;
         }
 
@@ -142,7 +142,7 @@ class EventStreamPlugin extends Plugin
             'payload' => $payload
         ]));
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_URL, $endpoint);
+        curl_setopt($curl, CURLOPT_URL, $endpoint->value);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 1);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
