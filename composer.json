@@ -4,7 +4,6 @@
     "license": "proprietary",
     "type": "blesta-plugin",
     "require": {
-        "blesta/composer-installer": "~1.0",
-        "guzzlehttp/guzzle": "^7.0"
+        "blesta/composer-installer": "~1.0"
     }
 }

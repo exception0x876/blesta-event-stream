@@ -134,16 +134,22 @@ class EventStreamPlugin extends Plugin
         if (empty($endpoint)) {
             return;
         }
-        $client = new \GuzzleHttp\Client();
-        try {
-            $client->postAsync($endpoint, [
-                GuzzleHttp\RequestOptions::JSON => [
-                    'event' => $event,
-                    'payload' => $payload
-                ]
-            ]);
-        } catch (Throwable $e) {
-            //ignore errors
-        }
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode([
+            'event' => $event,
+            'payload' => $payload
+        ]));
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_URL, $endpoint);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 1);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($curl, CURLOPT_SSLVERSION, 1);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+
+        curl_exec($curl);
+        curl_close($curl);
     }
 }
