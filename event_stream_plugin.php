@@ -128,6 +128,7 @@ class EventStreamPlugin extends Plugin
     protected function sendEvent($event, $payload = [])
     {
         $company_id = Configure::get('Blesta.company_id');
+        Loader::loadModels($this, ['Companies']);
         $endpoint = $this->Companies->getSetting($company_id, 'event_stream.endpoint');
         if (empty($endpoint)) {
             return;
