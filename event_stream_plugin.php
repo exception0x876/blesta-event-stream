@@ -86,7 +86,26 @@ class EventStreamPlugin extends Plugin
     {
         $params = $event->getParams();
         if (!empty($params['client'])) {
-            $this->sendEvent('clientAdded', $params['client']);
+            $eventData = [
+                'id' => $params['client']['id'] ?? '',
+                'user_id' => $params['client']['user_id'] ?? '',
+                'status' => $params['client']['status'] ?? '',
+                'id_code' => $params['client']['id_code'] ?? '',
+                'contact_id' => $params['client']['contact_id'] ?? '',
+                'first_name' => $params['client']['first_name'] ?? '',
+                'last_name' => $params['client']['last_name'] ?? '',
+                'company' => $params['client']['company'] ?? '',
+                'title' => $params['client']['title'] ?? '',
+                'email' => $params['client']['email'] ?? '',
+                'address1' => $params['client']['address1'] ?? '',
+                'address2' => $params['client']['address2'] ?? '',
+                'city' => $params['client']['city'] ?? '',
+                'state' => $params['client']['state'] ?? '',
+                'zip' => $params['client']['zip'] ?? '',
+                'country' => $params['client']['country'] ?? '',
+                'username' => $params['client']['username'] ?? '',
+            ];
+            $this->sendEvent('clientAdded', $eventData);
         }
     }
 
@@ -105,13 +124,15 @@ class EventStreamPlugin extends Plugin
      */
     public function sendInvoiceClosed($event)
     {
-        $this->sendEvent('invoiceClosed', $event->getParams());
-        //Loader::loadModels($this, ['Invoices']);
-        //$invoice = $this->Invoices->get($invoice_id);
+        $params = $event->getParams();
+        if (!empty($params['invoice_id'])) {
+            Loader::loadModels($this, ['Invoices']);
+            $invoice = $this->Invoices->get($params['invoice_id']);
 
-        /*if ($invoice) {
-            $this->sendEvent('invoiceClosed', (array) $invoice);
-        }*/
+            if ($invoice) {
+                $this->sendEvent('invoiceClosed', (array) $invoice);
+            }
+        }
     }
 
     /**
@@ -120,13 +141,15 @@ class EventStreamPlugin extends Plugin
      */
     public function sendTransaction($event)
     {
-        $this->sendEvent('transactionAdded', $event->getParams());
-        /*Loader::loadModels($this, ['Transactions']);
-        $transaction = $this->Transactions->get($transaction_id);
+        $params = $event->getParams();
+        if (!empty($params['transaction_id'])) {
+            Loader::loadModels($this, ['Transactions']);
+            $transaction = $this->Transactions->get($params['transaction_id']);
 
-        if ($transaction) {
-            $this->sendEvent('transactionAdded', (array) $transaction);
-        }*/
+            if ($transaction) {
+                $this->sendEvent('transactionAdded', (array) $transaction);
+            }
+        }
     }
 
     /**
