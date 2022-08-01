@@ -1,0 +1,11 @@
+{
+	"version": "1.0.0",
+	"name": "EventStreamPlugin.name",
+	"description": "EventStreamPlugin.description",
+	"authors": [
+		{
+			"name": "Michael Ivanov",
+			"url": "https://github.com/exception0x876"
+		}
+	]
+}

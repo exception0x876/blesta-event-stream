@@ -1,0 +1,25 @@
+        <?php
+        $this->Widget->clear();
+        $this->Widget->create($this->_('EventStreamManagePlugin.index.boxtitle_manage', true));
+        $this->Form->create();
+        ?>
+        <div class="inner">
+            <div class="pad">
+                <ul>
+                    <li>
+                        <?php $this->Form->label($this->_('EventStreamManagePlugin.index.field_endpoint', true));?>
+                        <?php $this->Form->fieldText('endpoint', (isset($vars->endpoint) ? $vars->endpoint : null));?>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="button_row">
+                <?php
+                $this->Form->fieldSubmit('save', $this->_('EventStreamManagePlugin.index.submit', true), ['class' => 'btn btn-primary pull-right']);
+                ?>
+            </div>
+        </div>
+        <?php
+        $this->Form->end();
+        $this->Widget->end();
+        ?>

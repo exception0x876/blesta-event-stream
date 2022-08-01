@@ -1,0 +1,9 @@
+{
+    "name": "exception0x876/event_stream",
+    "description": "Event Stream",
+    "license": "proprietary",
+    "type": "blesta-plugin",
+    "require": {
+        "blesta/composer-installer": "~1.0"
+    }
+}
