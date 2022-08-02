@@ -34,6 +34,7 @@ class EventStreamPlugin extends Plugin
         }
 
         $this->Companies->setSetting($plugin->company_id, 'event_stream.endpoint', '', true);
+        $this->Companies->setSetting($plugin->company_id, 'event_stream.public_key', '', true);
     }
 
     /**
@@ -54,6 +55,7 @@ class EventStreamPlugin extends Plugin
         }
 
         $this->Companies->unsetSetting($plugin->company_id, 'event_stream.endpoint');
+        $this->Companies->unsetSetting($plugin->company_id, 'event_stream.public_key');
     }
 
     public function getEvents()
