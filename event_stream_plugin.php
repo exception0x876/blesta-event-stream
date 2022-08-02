@@ -166,19 +166,31 @@ class EventStreamPlugin extends Plugin
             return;
         }
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode([
+        $post_data = json_encode([
             'event' => $event,
             'payload' => $payload
-        ]));
+        ]);
+
+        $curl = curl_init();
+        $headers = ['Content-Type: application/json'];
+
+        $private_key = $this->Companies->getSetting($company_id, 'event_stream.private_key');
+        if (!empty($private_key->value)) {
+            openssl_sign($post_data, $signature, $private_key->value, OPENSSL_ALGO_SHA256);
+            if (!empty($signature)) {
+                $headers[] = 'X-Event-Stream-Signature: ' . $signature;
+            }
+        }
+
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $post_data);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_URL, $endpoint->value);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 1);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
         curl_setopt($curl, CURLOPT_SSLVERSION, 1);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
         curl_exec($curl);
         curl_close($curl);
