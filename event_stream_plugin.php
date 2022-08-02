@@ -176,8 +176,8 @@ class EventStreamPlugin extends Plugin
 
         $private_key = $this->Companies->getSetting($company_id, 'event_stream.private_key');
         if (!empty($private_key->value)) {
-            openssl_sign($post_data, $signature, $private_key->value, OPENSSL_ALGO_SHA256);
-            if (!empty($signature)) {
+            $sign_result = openssl_sign($post_data, $signature, $private_key->value, OPENSSL_ALGO_SHA256);
+            if ($sign_result && !empty($signature)) {
                 $headers[] = 'X-Event-Stream-Signature: ' . $signature;
             }
         }
