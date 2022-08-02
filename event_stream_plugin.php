@@ -180,7 +180,7 @@ class EventStreamPlugin extends Plugin
         if (!empty($private_key->value)) {
             $sign_result = openssl_sign($post_data, $signature, $private_key->value, OPENSSL_ALGO_SHA256);
             if ($sign_result && !empty($signature)) {
-                $headers[] = 'X-Event-Stream-Signature: ' . $signature;
+                $headers[] = 'X-Event-Stream-Signature: ' . base64_encode($signature);
             }
         }
 
