@@ -81,6 +81,33 @@ class EventStreamPlugin extends Plugin
     }
 
     /**
+     * @param stdClass $client
+     * @return array
+     */
+    protected function getClientInfo($client)
+    {
+        return [
+            'id' => $client->id ?? '',
+            'user_id' => $client->user_id ?? '',
+            'status' => $client->status ?? '',
+            'id_code' => $client->id_code ?? '',
+            'contact_id' => $client->contact_id ?? '',
+            'first_name' => $client->first_name ?? '',
+            'last_name' => $client->last_name ?? '',
+            'company' => $client->company ?? '',
+            'title' => $client->title ?? '',
+            'email' => $client->email ?? '',
+            'address1' => $client->address1 ?? '',
+            'address2' => $client->address2 ?? '',
+            'city' => $client->city ?? '',
+            'state' => $client->state ?? '',
+            'zip' => $client->zip ?? '',
+            'country' => $client->country ?? '',
+            'username' => $client->username ?? '',
+        ];
+    }
+
+    /**
      * @param stdClass $event
      * @return void
      */
@@ -88,25 +115,7 @@ class EventStreamPlugin extends Plugin
     {
         $params = $event->getParams();
         if (!empty($params['client'])) {
-            $eventData = [
-                'id' => $params['client']->id ?? '',
-                'user_id' => $params['client']->user_id ?? '',
-                'status' => $params['client']->status ?? '',
-                'id_code' => $params['client']->id_code ?? '',
-                'contact_id' => $params['client']->contact_id ?? '',
-                'first_name' => $params['client']->first_name ?? '',
-                'last_name' => $params['client']->last_name ?? '',
-                'company' => $params['client']->company ?? '',
-                'title' => $params['client']->title ?? '',
-                'email' => $params['client']->email ?? '',
-                'address1' => $params['client']->address1 ?? '',
-                'address2' => $params['client']->address2 ?? '',
-                'city' => $params['client']->city ?? '',
-                'state' => $params['client']->state ?? '',
-                'zip' => $params['client']->zip ?? '',
-                'country' => $params['client']->country ?? '',
-                'username' => $params['client']->username ?? '',
-            ];
+            $eventData = $this->getClientInfo($params['client']);
             $this->sendEvent('clientAdded', $eventData);
         }
     }
@@ -149,7 +158,15 @@ class EventStreamPlugin extends Plugin
             $transaction = $this->Transactions->get($params['transaction_id']);
 
             if ($transaction) {
-                $this->sendEvent('transactionAdded', (array) $transaction);
+                $payload = (array) $transaction;
+                if (!empty($payload['client_id'])) {
+                    Loader::loadModels($this, ['Clients']);
+                    $client = $this->Clients->get($params['client_id']);
+                    if (!empty($client)) {
+                        $payload['client'] = $this->getClientInfo($client);
+                    }
+                }
+                $this->sendEvent('transactionAdded', $payload);
             }
         }
     }
