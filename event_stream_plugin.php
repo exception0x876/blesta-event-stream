@@ -167,9 +167,9 @@ class EventStreamPlugin extends Plugin
 
             if ($transaction) {
                 $payload['transaction'] = (array) $transaction;
-                if (!empty($payload['client_id'])) {
+                if (!empty($payload['transaction']['client_id'])) {
                     Loader::loadModels($this, ['Clients']);
-                    $client = $this->Clients->get($payload['client_id']);
+                    $client = $this->Clients->get($payload['transaction']['client_id']);
                     if (!empty($client)) {
                         $payload['client'] = $this->getClientInfo($client);
                     }
