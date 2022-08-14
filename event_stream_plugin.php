@@ -116,7 +116,10 @@ class EventStreamPlugin extends Plugin
         $params = $event->getParams();
         if (!empty($params['client'])) {
             $eventData = $this->getClientInfo($params['client']);
-            $this->sendEvent('clientAdded', $eventData);
+            $payload = [
+                'client' => $eventData
+            ];
+            $this->sendEvent('clientAdded', $payload);
         }
     }
 
@@ -137,11 +140,16 @@ class EventStreamPlugin extends Plugin
     {
         $params = $event->getParams();
         if (!empty($params['invoice_id'])) {
-            Loader::loadModels($this, ['Invoices']);
+            Loader::loadModels($this, ['Invoices', 'Transactions']);
             $invoice = $this->Invoices->get($params['invoice_id']);
+            $transactionsApplied = $this->Transactions->getApplied(null, $params['invoice_id']);
+            $payload = [
+                'invoice' => (array) $invoice,
+                'transactions_applied' => (array) $transactionsApplied,
+            ];
 
             if ($invoice) {
-                $this->sendEvent('invoiceClosed', (array) $invoice);
+                $this->sendEvent('invoiceClosed', $payload);
             }
         }
     }
@@ -158,7 +166,7 @@ class EventStreamPlugin extends Plugin
             $transaction = $this->Transactions->get($params['transaction_id']);
 
             if ($transaction) {
-                $payload = (array) $transaction;
+                $payload['transaction'] = (array) $transaction;
                 if (!empty($payload['client_id'])) {
                     Loader::loadModels($this, ['Clients']);
                     $client = $this->Clients->get($payload['client_id']);
