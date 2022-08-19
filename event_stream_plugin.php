@@ -73,10 +73,6 @@ class EventStreamPlugin extends Plugin
                 'event' => 'Invoices.setClosed',
                 'callback' => ['this', 'sendInvoiceClosed']
             ],
-            [
-                'event' => 'Transactions.add',
-                'callback' => ['this', 'sendTransaction']
-            ]
         ];
     }
 
@@ -140,41 +136,20 @@ class EventStreamPlugin extends Plugin
     {
         $params = $event->getParams();
         if (!empty($params['invoice_id'])) {
-            Loader::loadModels($this, ['Invoices', 'Transactions']);
+            Loader::loadModels($this, ['Clients', 'Invoices', 'Transactions']);
             $invoice = $this->Invoices->get($params['invoice_id']);
             $transactionsApplied = $this->Transactions->getApplied(null, $params['invoice_id']);
             $payload = [
                 'invoice' => (array) $invoice,
                 'transactions_applied' => (array) $transactionsApplied,
             ];
+            $client = $this->Clients->get($payload['invoice']['client_id']);
+            if (!empty($client)) {
+                $payload['client'] = $this->getClientInfo($client);
+            }
 
             if ($invoice) {
                 $this->sendEvent('invoiceClosed', $payload);
-            }
-        }
-    }
-
-    /**
-     * @param stdClass $event
-     * @return void
-     */
-    public function sendTransaction($event)
-    {
-        $params = $event->getParams();
-        if (!empty($params['transaction_id'])) {
-            Loader::loadModels($this, ['Transactions']);
-            $transaction = $this->Transactions->get($params['transaction_id']);
-
-            if ($transaction) {
-                $payload['transaction'] = (array) $transaction;
-                if (!empty($payload['transaction']['client_id'])) {
-                    Loader::loadModels($this, ['Clients']);
-                    $client = $this->Clients->get($payload['transaction']['client_id']);
-                    if (!empty($client)) {
-                        $payload['client'] = $this->getClientInfo($client);
-                    }
-                }
-                $this->sendEvent('transactionAdded', $payload);
             }
         }
     }
