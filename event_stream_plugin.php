@@ -128,7 +128,14 @@ class EventStreamPlugin extends Plugin
      */
     public function sendClientUpdated($event)
     {
-        $this->sendEvent('clientUpdated', $event->getParams());
+        $params = $event->getParams();
+        if (!empty($params['client'])) {
+            $eventData = $this->getClientInfo($params['client']);
+            $payload = [
+                'client' => $eventData
+            ];
+            $this->sendEvent('clientUpdated', $payload);
+        }
     }
 
     /**
