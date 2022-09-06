@@ -129,8 +129,10 @@ class EventStreamPlugin extends Plugin
     public function sendClientUpdated($event)
     {
         $params = $event->getParams();
-        if (!empty($params['client'])) {
-            $eventData = $this->getClientInfo($params['client']);
+        if (!empty($params['client_id'])) {
+            Loader::loadModels($this, ['Clients']);
+            $client = $this->Clients->get($params['client_id']);
+            $eventData = $this->getClientInfo($client);
             $payload = [
                 'client' => $eventData
             ];
