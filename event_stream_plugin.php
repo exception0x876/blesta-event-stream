@@ -82,6 +82,8 @@ class EventStreamPlugin extends Plugin
      */
     protected function getClientInfo($client)
     {
+        Loader::loadModels($this, ['Logs']);
+        $user_log = $this->Logs->getUserLog($client->user_id, 'success');
         return [
             'id' => $client->id ?? '',
             'user_id' => $client->user_id ?? '',
@@ -100,6 +102,7 @@ class EventStreamPlugin extends Plugin
             'zip' => $client->zip ?? '',
             'country' => $client->country ?? '',
             'username' => $client->username ?? '',
+            'ip_address' => $user_log->ip_address ?? '',
         ];
     }
 
