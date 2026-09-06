@@ -29,9 +29,13 @@ class ClientMain extends AppController
         // (confirmed empirically). allow_origin doubles as the redirect
         // destination's origin here.
         if (!empty($allow_origin->value) && $signature !== '') {
-            $callback_url = rtrim($allow_origin->value, '/') . '/login/blesta/callback'
-                . '?rawPayload=' . urlencode($user_data)
-                . '&signature=' . urlencode($signature);
+            // Single base64url blob rather than two urlencoded params — no
+            // percent-encoding overhead (base64url's alphabet is already
+            // URL-safe) and comfortably within any URL-length limit that
+            // matters here (~580 chars for a 2048-bit signature).
+            $combined = json_encode(['rawPayload' => $user_data, 'signature' => $signature]);
+            $data = rtrim(strtr(base64_encode($combined), '+/', '-_'), '=');
+            $callback_url = rtrim($allow_origin->value, '/') . '/login/blesta/callback?data=' . $data;
             header('Location: ' . $callback_url);
             exit();
         }
