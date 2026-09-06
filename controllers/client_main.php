@@ -18,6 +18,9 @@ class ClientMain extends AppController
             $headers[] = 'Access-Control-Allow-Origin: ' . $allow_origin->value;
             $headers[] = 'Access-Control-Allow-Credentials: true';
             $headers[] = 'Access-Control-Allow-Methods: GET, OPTIONS';
+            // Without this, browsers block JS from reading any non-simple
+            // response header cross-origin, including the signature below.
+            $headers[] = 'Access-Control-Expose-Headers: X-Event-Stream-Signature';
         }
         if (!empty($private_key->value)) {
             $sign_result = openssl_sign($user_data, $signature, $private_key->value, OPENSSL_ALGO_SHA256);
